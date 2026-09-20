@@ -250,3 +250,29 @@ export async function aksiHapusTugas(tugasId: string): Promise<StatusAksi> {
   revalidatePath("/kontingen", "layout")
   return { sukses: "Penugasan dihapus." }
 }
+
+export async function aksiTutupHasil(
+  tingkatId: string,
+  paksa: boolean,
+): Promise<StatusAksi & { lulus?: number; tidakLulus?: number; tanpaNilai?: number }> {
+  await wajibPeran("kontingen")
+
+  const supabase = await buatKlienServer()
+  const { data, error } = await supabase.rpc("tutup_hasil", {
+    p_tingkat_id: tingkatId,
+    p_paksa: paksa,
+  })
+
+  if (error) return { galat: error.message }
+
+  const hasil = data?.[0]
+
+  revalidatePath("/", "layout")
+
+  return {
+    sukses: `Hasil ditutup: ${hasil?.lulus ?? 0} lulus, ${hasil?.tidak_lulus ?? 0} tidak lulus.`,
+    lulus: hasil?.lulus,
+    tidakLulus: hasil?.tidak_lulus,
+    tanpaNilai: hasil?.tanpa_nilai,
+  }
+}

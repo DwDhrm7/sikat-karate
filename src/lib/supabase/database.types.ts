@@ -607,6 +607,14 @@ export type Database = {
       }
       peserta_id_dari_path: { Args: { p_name: string }; Returns: string }
       simpan_penilaian: { Args: { p_items: Json }; Returns: string[] }
+      tutup_hasil: {
+        Args: { p_paksa?: boolean; p_tingkat_id: string }
+        Returns: {
+          lulus: number
+          tanpa_nilai: number
+          tidak_lulus: number
+        }[]
+      }
       terbitkan_nomor_dada: {
         Args: { p_dojo_id: string; p_event_id: string; p_tingkat_id: string }
         Returns: {

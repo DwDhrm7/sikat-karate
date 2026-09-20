@@ -11,6 +11,7 @@ const TAUTAN = [
   { href: "/kontingen/dojo", label: "Dojo" },
   { href: "/kontingen/akun", label: "Akun" },
   { href: "/kontingen/penguji", label: "Penguji" },
+  { href: "/kontingen/cetak", label: "Cetak" },
   { href: "/kontingen/audit", label: "Audit" },
 ] as const
 

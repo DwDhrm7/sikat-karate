@@ -5,6 +5,8 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { getProgresTingkat } from "@/lib/data/kontingen"
 
+import { TutupHasil } from "./tutup-hasil"
+
 export const metadata = { title: "Progres — SIKAT" }
 
 function Bilah({ nilai, dari }: { nilai: number; dari: number }) {
@@ -119,6 +121,22 @@ export default async function HalamanProgres() {
                     </span>
                   ))}
               </div>
+
+              {t.hasilDitutup ? (
+                <Link
+                  href="/kontingen/cetak"
+                  className="inline-block text-sm font-medium underline underline-offset-4"
+                >
+                  Cetak sertifikat dan rekap →
+                </Link>
+              ) : (
+                <TutupHasil
+                  tingkatId={t.tingkatId}
+                  kode={t.kode}
+                  siapDinilai={t.layak}
+                  sudahDinilai={t.dinilai}
+                />
+              )}
 
               <Link
                 href="/kontingen/penguji"

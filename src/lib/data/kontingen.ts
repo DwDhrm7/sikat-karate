@@ -178,3 +178,44 @@ export async function getAuditLog(filter: FilterAudit = {}) {
     namaAktor: b.aktor_id ? (nama.get(b.aktor_id) ?? "(tidak dikenal)") : "sistem",
   }))
 }
+
+/** Berapa peserta bernomor dan berapa yang lulus, per tingkat per dojo. */
+export const getRingkasanCetak = cache(async () => {
+  const supabase = await buatKlienServer()
+
+  const [{ data: tingkat }, { data: peserta }, { data: dojo }] = await Promise.all([
+    supabase
+      .from("tingkat")
+      .select("id, kode, nama, hasil_ditutup, urutan")
+      .order("urutan"),
+    supabase
+      .from("peserta")
+      .select("tingkat_id, dojo_id, status, no_dada")
+      .not("no_dada", "is", null),
+    supabase.from("dojo").select("id, nama, kode").order("nama"),
+  ])
+
+  return (tingkat ?? [])
+    .map((t) => {
+      const milik = (peserta ?? []).filter((p) => p.tingkat_id === t.id)
+
+      return {
+        tingkatId: t.id,
+        kode: t.kode,
+        nama: t.nama,
+        hasilDitutup: t.hasil_ditutup,
+        total: milik.length,
+        lulus: milik.filter((p) => p.status === "lulus").length,
+        perDojo: (dojo ?? [])
+          .map((d) => ({
+            dojoId: d.id,
+            nama: d.nama,
+            kode: d.kode,
+            jumlah: milik.filter((p) => p.dojo_id === d.id).length,
+            lulus: milik.filter((p) => p.dojo_id === d.id && p.status === "lulus").length,
+          }))
+          .filter((d) => d.jumlah > 0),
+      }
+    })
+    .filter((t) => t.total > 0)
+})

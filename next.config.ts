@@ -1,7 +1,12 @@
-import type { NextConfig } from "next";
+import type { NextConfig } from "next"
 
 const nextConfig: NextConfig = {
-  /* config options here */
-};
+  /**
+   * Puppeteer memuat Chromium lewat require dinamis dan berkas biner, yang
+   * tidak bisa ikut dibundel. Biarkan Node yang memuatnya sendiri saat
+   * runtime.
+   */
+  serverExternalPackages: ["puppeteer", "puppeteer-core"],
+}
 
-export default nextConfig;
+export default nextConfig

@@ -156,6 +156,24 @@ Kiriman ganda untuk peserta yang sama diselesaikan dengan aturan "yang
 terakhir menang", supaya antrean yang menumpuk tidak menimbulkan galat
 konflik.
 
+## Penutupan hasil
+
+`tutup_hasil(p_tingkat_id, p_paksa)` menghitung lulus dari `batas_lulus`,
+menandai yang tidak hadir sebagai tidak lulus apa pun nilainya, mengunci
+seluruh `penilaian` tingkat itu, lalu menyetel `hasil_ditutup`.
+
+Peserta yang belum punya nilai sama sekali menghentikan penutupan. Menutup
+sementara mereka menggantung berarti memvonis tidak lulus orang yang mungkin
+hanya belum sempat diinput pengujinya, jadi kontingen harus menyatakan
+`p_paksa` secara terpisah — bukan menyetujui satu tombol yang artinya kabur.
+
+Sesudah ditutup, kontingen masih bisa mengubah nilai lewat policy-nya
+sendiri, dan setiap perubahan itu tercatat trigger audit.
+
+Diuji: 25 peserta HB dengan batas lulus 65 menghasilkan 17 lulus dan 8 tidak
+lulus; dua peserta bernilai persis 65 lulus, satu peserta tidak hadir dengan
+nilai 90 tetap tidak lulus, dan penutupan kedua ditolak.
+
 ## Row Level Security
 
 | Peran | Yang terlihat |

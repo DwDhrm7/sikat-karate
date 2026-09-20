@@ -106,6 +106,27 @@ export default async function BerandaDojo() {
                   siapDikunci={t.siapDikunci}
                   menggantung={t.menggantung}
                 />
+
+                {t.blokNomor ? (
+                  <div className="flex flex-wrap gap-2">
+                    <a
+                      href={`/api/cetak/kartu?tingkat=${t.tingkatId}`}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="inline-flex h-10 items-center rounded-lg border-2 border-foreground px-3 text-sm font-medium hover:bg-foreground hover:text-background"
+                    >
+                      Cetak kartu peserta
+                    </a>
+                    <a
+                      href={`/api/cetak/rapor?tingkat=${t.tingkatId}`}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="inline-flex h-10 items-center rounded-lg border border-border px-3 text-sm hover:bg-accent"
+                    >
+                      Rekap nilai
+                    </a>
+                  </div>
+                ) : null}
               </CardContent>
             </Card>
           )

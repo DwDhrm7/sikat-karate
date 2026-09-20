@@ -77,6 +77,36 @@ aplikasi ini yang memakai kunci itu, karena membuat pengguna lain memang
 mustahil lewat RLS. Peran diberikan setelah akun jadi; `handle_new_user()`
 selalu memberi `peserta` lebih dulu, apa pun yang dikirim pendaftar.
 
+## Cetak
+
+Tiga dokumen dihasilkan Puppeteer dari template HTML di `src/cetak/`:
+
+| Berkas | Isi | Syarat |
+|---|---|---|
+| `kartu-peserta.ts` | 8 kartu per A4, nomor dada besar dan QR berisi id peserta | batch sudah dikunci |
+| `sertifikat.ts` | satu lembar A4 lanskap per peserta lulus | hasil sudah ditutup |
+| `rapor.ts` | rekap nilai per dojo | hasil sudah ditutup |
+
+Template murni tampilan — tidak ada kueri, tidak ada aturan bisnis. Untuk
+menyuntingnya tanpa menunggu PDF dibuat, tambahkan `&pratinjau=1` pada URL
+cetaknya dan halaman itu akan tampil sebagai HTML biasa:
+
+```
+/api/cetak/rapor?tingkat=<id>&pratinjau=1
+```
+
+Tata letaknya bisa dipotret jadi PNG untuk diperiksa:
+
+```bash
+KUKI="$(node scripts/sesi-uji.mjs kontingen@sikat.test sikat123)" \
+  node scripts/bidik-cetak.mjs \
+  "http://localhost:3000/api/cetak/rapor?tingkat=<id>&pratinjau=1" rapor.png
+```
+
+Template menyusun HTML sebagai teks, bukan lewat React — Next melarang
+`react-dom/server` di runtime App Router. Konsekuensinya setiap nilai dari
+data wajib lewat `esc()`; lihat `src/lib/cetak/html.ts`.
+
 ## Uji ujung-ke-ujung
 
 ```bash
@@ -103,6 +133,9 @@ lewat `PORT_UJI` bila perlu.
 - Supabase Auth menolak alamat berdomain tak terkirim (`.test`, `example.com`)
   pada pendaftaran mandiri. Untuk menguji alur peserta, pakai domain email asli
   atau buat akunnya lewat service_role.
+- Puppeteer memuat Chromium lewat require dinamis, jadi didaftarkan di
+  `serverExternalPackages` pada `next.config.ts`. Untuk deploy serverless,
+  ganti dengan `puppeteer-core` + `@sparticuz/chromium`.
 - Variabel `NEXT_PUBLIC_*` hanya diganti Next saat kompilasi bila disebut
   sebagai rujukan statis, misalnya `process.env.NEXT_PUBLIC_SUPABASE_URL`.
   Membacanya lewat kunci dinamis (`process.env[nama]`) lolos dari penggantian
